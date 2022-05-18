@@ -38,12 +38,24 @@ async function showPokemon(response) {
 
     pokemonImg.style.width = "-webkit-fill-available"
     pokemonImg.style.padding = "10px"
-    pokemonImg.style.margin = "10px 0px 0px 0px"
+    pokemonImg.style.margin = "10px 0px 10px 0px"
     pokemonImg.style.borderRadius = "10px"
     pokemonImg.style.backgroundColor = "green"
 
     // add pokemonType styles
 
+    pokemonType.style.display = "flex"
+    pokemonType.style.justifyContent = "space-around"
+    pokemonType.style.backgroundColor = "orange"
+    pokemonType.style.borderRadius = "10px 10px 0px 0px"
+    pokemonType.style.margin = "0px 0px 5px 0px"
+
+    // add pokemonAbility styles
+
+    pokemonAbility.style.backgroundColor = "orange"
+    pokemonAbility.style.borderRadius = "0px 0px 10px 10px"
+    pokemonAbility.style.margin = "0px"
+    pokemonAbility.style.padding = "10px"
 
 
     // add pokemon name, id and image
@@ -54,7 +66,14 @@ async function showPokemon(response) {
 
     // add pokemon type
 
-    
+    data["types"].forEach(types => {
+      const typeParagraph = document.createElement("p")
+      const type = types["type"]["name"]
+      typeParagraph.innerText = type.charAt(0).toUpperCase() + type.slice(1)
+      typeParagraph.style.margin = "0px"
+      pokemonType.appendChild(typeParagraph)
+
+    })    
 
 
     // add abilities
@@ -68,16 +87,12 @@ async function showPokemon(response) {
       const abilityEffect = abilityEffects["effect_entries"]
       
       // abilityEffect.find(englishVersion => {if (englishVersion["language"]["name"] === "en") return englishVersion["short_effect"]})
-      // console.log(abilityEffect)
-      // abilityEffect.find(englishVersion => {if (englishVersion["language"]["name"] === "en") console.log(englishVersion["short_effect"])})
-      // console.log(abilityEffect)
 
-      // abilityParagraph.innerText = abilityName.charAt(0).toUpperCase() + abilityName.slice(1)
+      abilityParagraph.innerText = abilityName.charAt(0).toUpperCase() + abilityName.slice(1)
       // abilityParagraph.innerText = abilityEffect
 
-      abilityParagraph.style.backgroundColor = "orange"
-      abilityParagraph.style.borderRadius = "5px"
-      abilityParagraph.style.padding = "10px"
+      abilityParagraph.style.margin = "10px"
+      abilityParagraph.style.margin = "0px"
       pokemonAbility.appendChild(abilityParagraph)
     })
 
