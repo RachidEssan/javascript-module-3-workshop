@@ -1,10 +1,14 @@
-fetch('https://pokeapi.co/api/v2/pokemon/1')
-.then(showPokemon)
-
-async function showPokemon(response) {
+async function makeRequest(url) {
+  try {
+    const response = await fetch(url);
     const data = await response.json();
-    
+    return data;
+  } catch (error) {
+    console.log("something went wrong..", error);
+  }
+}
 
+async function showPokemon(data) {
     // create card elements
 
     const pokemonCard = document.createElement("div");
@@ -19,7 +23,8 @@ async function showPokemon(response) {
 
     pokemonCard.style.display = "block"
     pokemonCard.style.width = "300px"
-    pokemonCard.style.backgroundColor = "deepskyblue"
+    pokemonCard.style.height = "600px"
+    pokemonCard.style.backgroundColor = "goldenrod"
     pokemonCard.style.color = "white"
     pokemonCard.style.fontFamily = "sans-serif"
     pokemonCard.style.borderRadius = "10px"
@@ -29,7 +34,7 @@ async function showPokemon(response) {
     // add pokemonTitle styles
 
     pokemonTitle.style.display = "flex"
-    pokemonTitle.style.backgroundColor = "orange"
+    pokemonTitle.style.backgroundColor = "chocolate"
     pokemonTitle.style.justifyContent = 'space-between'
     pokemonTitle.style.borderRadius = "10px"   
     pokemonTitle.style.padding = "0em 1em 0em 1em"
@@ -37,23 +42,26 @@ async function showPokemon(response) {
     // add pokemonImg styles
 
     pokemonImg.style.width = "-webkit-fill-available"
+    pokemonImg.style.height = "300px"    
+    pokemonImg.style.width = "280px"    
     pokemonImg.style.padding = "10px"
     pokemonImg.style.margin = "10px 0px 10px 0px"
     pokemonImg.style.borderRadius = "10px"
-    pokemonImg.style.backgroundColor = "green"
+    pokemonImg.style.backgroundColor = "navajowhite"
 
     // add pokemonType styles
 
     pokemonType.style.display = "flex"
     pokemonType.style.justifyContent = "space-around"
-    pokemonType.style.backgroundColor = "orange"
+    pokemonType.style.backgroundColor = "chocolate"
     pokemonType.style.borderRadius = "10px 10px 0px 0px"
     pokemonType.style.margin = "0px 0px 5px 0px"
 
     // add pokemonAbility styles
 
-    pokemonAbility.style.backgroundColor = "orange"
+    pokemonAbility.style.backgroundColor = "chocolate"
     pokemonAbility.style.borderRadius = "0px 0px 10px 10px"
+    pokemonAbility.style.height = "160px"
     pokemonAbility.style.margin = "0px"
     pokemonAbility.style.padding = "10px"
 
@@ -72,25 +80,19 @@ async function showPokemon(response) {
       typeParagraph.innerText = type.charAt(0).toUpperCase() + type.slice(1)
       typeParagraph.style.margin = "0px"
       pokemonType.appendChild(typeParagraph)
-
     })    
 
-
     // add abilities
-
-    const abilityList = data["abilities"]
   
-    abilityList.forEach(async ability => {
+    data["abilities"].forEach(async ability => {
       const abilityParagraph = document.createElement("p")
-      const abilityName = ability["ability"]["name"]
-      const abilityEffects = await fetch(ability["ability"]["url"]).then(response => response.json())
-      const abilityEffect = abilityEffects["effect_entries"]
+      const abilitiesName = ability["ability"]["name"]
+      const abilitiesEffect = await makeRequest(ability["ability"]["url"])
+      const abilityEffect = abilitiesEffect["effect_entries"].find(englishVersion => (englishVersion["language"]["name"] === "en"))
+      const abilityName = abilitiesName.charAt(0).toUpperCase() + abilitiesName.slice(1)
       
-      // abilityEffect.find(englishVersion => {if (englishVersion["language"]["name"] === "en") return englishVersion["short_effect"]})
-
-      abilityParagraph.innerText = abilityName.charAt(0).toUpperCase() + abilityName.slice(1)
-      // abilityParagraph.innerText = abilityEffect
-
+      abilityParagraph.innerText = ` - ${abilityName}: ${abilityEffect.short_effect}`
+      abilityParagraph.style.fontSize = "0.9em"
       abilityParagraph.style.margin = "10px"
       abilityParagraph.style.margin = "0px"
       pokemonAbility.appendChild(abilityParagraph)
@@ -104,26 +106,65 @@ async function showPokemon(response) {
     pokemonCard.appendChild(pokemonImg)
     pokemonCard.appendChild(pokemonType)
     pokemonCard.appendChild(pokemonAbility)
-    document.body.appendChild(pokemonCard)
+    cardContainer.appendChild(pokemonCard)
   }
 
-// create search function
+// search feature elements
 
+const pokemonLogo = document.createElement("img")
 const searchPokemon = document.createElement("input")
 const searchButton = document.createElement("button")
+const cardContainer = document.createElement("div")
+const searchContainer = document.createElement("div")
+
+cardContainer.style.display = "flex"
+cardContainer.style.flexWrap = "wrap"
+cardContainer.style.flexDirection = "row"
+cardContainer.style.justifyContent = "center"
+searchContainer.style.display = "flex"
+searchContainer.style.justifyContent = "center"
+searchContainer.style.alignItems = "center"
+searchContainer.style.margin ="20px 0px 0px"
+
+// logo styles
+
+pokemonLogo.src = ("https://fontmeme.com/permalink/220518/535a1bcb708fc9b91c548cb522c4a64d.png")
+pokemonLogo.style.display = "block"
+pokemonLogo.style.margin ="50px auto 0px auto"
+
+// setup search box
 
 searchPokemon.setAttribute("type", "text")
 searchPokemon.placeholder = " Type Pokemon or ID here"
+searchPokemon.style.borderRadius = "4px"
+searchPokemon.style.height = "35px"
+searchPokemon.style.width = "300px"
+searchPokemon.style.margin = "10px"
+searchPokemon.style.fontSize = "1em"
+
+// setup search button
+
 searchButton.innerHTML = " Search Pokemon"
+searchButton.style.borderRadius = "4px"
+searchButton.style.height = "40px"
+searchButton.style.width = "200px"
+searchButton.style.margin = "10px"
+searchButton.style.fontSize = "1em"
 
-document.body.appendChild(searchPokemon)
-document.body.appendChild(searchButton)
+// append elements
 
-searchButton.addEventListener("click", () => {
+document.body.appendChild(pokemonLogo)
+searchContainer.appendChild(searchPokemon)
+searchContainer.appendChild(searchButton)
+document.body.appendChild(searchContainer)
+document.body.appendChild(cardContainer)
+
+// search function
+
+searchButton.addEventListener("click", async () => {
   const id = searchPokemon.value
-
-    fetch('https://pokeapi.co/api/v2/pokemon/'+id)
-    .then(response => showPokemon(response))
-    .catch(response => console.log(response))
+  const pokemon = await makeRequest("https://pokeapi.co/api/v2/pokemon/" + id);
+  showPokemon(pokemon);
 })
+
 
